@@ -23,7 +23,7 @@ class _SvnFileList(list):
 
 class _GitFileList(list):
     def __init__(self):
-        f = os.popen('git-ls-files')
+        f = os.popen('git ls-files')
         for line in f.readlines():
             filename = line.strip()
             if not filename.startswith('.'):
