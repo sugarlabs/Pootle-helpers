@@ -7,8 +7,8 @@ from stat import *
 from jToolkit import prefs
 from teampagegenerator import TeamPageGenerator
 
-users = prefs.PrefsParser('/home/sayamindu/Download/etc/pootle/users.prefs')
-pootleprefs = prefs.PrefsParser('/home/sayamindu/Download/etc/pootle/pootle.prefs')
+users = prefs.PrefsParser('/etc/pootle/users.prefs')
+pootleprefs = prefs.PrefsParser('/etc/pootle/pootle.prefs')
 
 
 def walktree(top, callback):
@@ -41,7 +41,7 @@ def visitfile(file):
         if f.__hasattr__('rights'):
             for i in f.rights.iteritems():
                 if i[1].find('admin') > -1:
-                    print '\t' + getattr(users, i[0] + '.name')
+                    print '\t' + getattr(users, i[0] + '.name').encode('utf-8')
                     found_admin = 1
 
         if found_admin == 0:

@@ -21,7 +21,7 @@ def pipe(command):
     print output, error
     return output, error, ret
 
-for i in ['glucose', 'fructose', 'honey']:
+for i in ['honey']:
     podirpath = os.path.join(LINKDIR, i)
     for j in os.listdir(podirpath):
         # List of languages 
@@ -46,7 +46,7 @@ for i in ['glucose', 'fructose', 'honey']:
                     if not DRYRUN:
                         os.symlink(cofile, filepath)
                     if not DRYRUN:
-                        time.sleep(2) # Just a bit extra cautious here
+                        time.sleep(1) # Just a bit extra cautious here
                         os.chdir(os.path.dirname(cofile))
                         pipe('git pull')
                         cmd = 'git add ' + os.path.basename(cofile)
