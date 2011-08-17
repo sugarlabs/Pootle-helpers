@@ -273,7 +273,7 @@ class PotFile:
             shutil.move(new_pot_file, self.location)
         else:
             os.unlink(new_pot_file)
-            
+        sys.stdout.flush() #aleksey suggestion   
 
 def parse_config(location):
     cfg = ConfigParser.ConfigParser()
