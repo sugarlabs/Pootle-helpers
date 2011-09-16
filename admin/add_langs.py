@@ -33,12 +33,7 @@ for project in ['honey']:
                     # got a file which is not a symlink
                     lang = project_lang
                     module = po_filename.replace('.po', '')
-                    if po_filename.find('TamTam') > -1:
-            			cofile = os.path.join(CODIR, project, 'tamtam', module, 'po', (lang+'.po'))
-                    #elif po_filename.startswith('measure'):
-                    #	cofile = os.path.join(CODIR, project, 'measure-activity', module, 'po', (lang+'.po'))
-                    else:
-                        cofile = os.path.join(CODIR, project, module, 'po', (lang+'.po'))
+                    cofile = os.path.join(CODIR, project, module, 'po', (lang+'.po'))
                     print ('\n\nMoving ' + filepath + ' to ' + cofile)
                     if not DRYRUN:
                         shutil.move(filepath, cofile)
