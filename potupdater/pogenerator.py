@@ -201,12 +201,13 @@ def _parse_contents(contents):
     return result    
 
 class PotFile:
-    def __init__(self, location, project, vcs, method, layout):
+    def __init__(self, location, project, vcs, method, layout, ignore_files):
         self.location = location
         self.project = project
         self.vcs = vcs
         self.method = method
         self.layout = layout
+        self.ignore_files = ignore_files
         
     def update(self):
         print '\n\n\n ####### Checking POT for ' + self.project + ' ######\n\n\n'
@@ -241,7 +242,7 @@ class PotFile:
             python_files = []
             file_list = _get_file_list(manifest)
             for file_name in file_list:
-                if os.path.exists(file_name) and file_name.endswith('.py'):
+                if os.path.exists(file_name) and file_name.endswith('.py') and file_name not in self.ignore_files:
                     python_files.append(file_name)
 
             # First write out a stub .pot file containing just the translated
@@ -290,9 +291,12 @@ class PotFile:
 def parse_config(location):
     cfg = ConfigParser.ConfigParser()
     cfg.read(location)
-    for i in cfg.sections():
-        p = PotFile(i, cfg.get(i, 'project'), cfg.get(i, 'vcs'), 
-                cfg.get(i, 'method'), cfg.get(i, 'layout'))
+    for section in cfg.sections():
+        ignore_files = []
+        if cfg.has_option(section, 'ignore-files'):
+            ignore_files = [i.strip() for i in cfg.get(section, 'ignore-files').split(';')]
+        p = PotFile(section, cfg.get(section, 'project'), cfg.get(section, 'vcs'),
+                cfg.get(section, 'method'), cfg.get(section, 'layout'), ignore_files)
         p.update()
         
 if __name__ == '__main__':
