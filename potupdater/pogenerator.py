@@ -210,6 +210,8 @@ class PotFile:
         
     def update(self):
         print '\n\n\n ####### Checking POT for ' + self.project + ' ######\n\n\n'
+        # Make sure that stdout won't be messy
+        sys.stdout.flush()
         # First we get the latest code from versioncontrol
         podir = os.path.dirname(self.location)
         os.chdir(podir)
@@ -239,7 +241,7 @@ class PotFile:
             python_files = []
             file_list = _get_file_list(manifest)
             for file_name in file_list:
-                if file_name.endswith('.py'):
+                if os.path.exists(file_name) and file_name.endswith('.py'):
                     python_files.append(file_name)
 
             # First write out a stub .pot file containing just the translated
