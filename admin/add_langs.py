@@ -26,16 +26,16 @@ for project in ['honey']:
     for project_lang in os.listdir(project_langs_dir):
         # List of languages 
         project_po_dir = os.path.join(project_langs_dir, project_lang)
-        for k in os.listdir(project_po_dir):
-            if k.endswith('.po'):
-                filepath = os.path.join(project_po_dir, k)
+        for po_filename in os.listdir(project_po_dir):
+            if po_filename.endswith('.po'):
+                filepath = os.path.join(project_po_dir, po_filename)
                 if not os.path.islink(filepath):
                     # got a file which is not a symlink
                     lang = project_lang
-                    module = k.replace('.po', '')
-                    if k.find('TamTam') > -1:
+                    module = po_filename.replace('.po', '')
+                    if po_filename.find('TamTam') > -1:
             			cofile = os.path.join(CODIR, project, 'tamtam', module, 'po', (lang+'.po'))
-                    #elif k.startswith('measure'):
+                    #elif po_filename.startswith('measure'):
                     #	cofile = os.path.join(CODIR, project, 'measure-activity', module, 'po', (lang+'.po'))
                     else:
                         cofile = os.path.join(CODIR, project, module, 'po', (lang+'.po'))
