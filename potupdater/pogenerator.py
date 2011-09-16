@@ -215,7 +215,16 @@ class PotFile:
         os.chdir(podir)
         if self.vcs == 'git':
             args = ['git', 'pull']
-            subprocess.call(args) 
+            ret = subprocess.call(args)
+            #if ret > 0:
+            #    # use the 'ours' merge driver -- in case of conflicts
+            #    # the pootle version takes precedence
+            #    #
+            #    # XXX and otherwrite all non-po/ differences to make activity develoopers really happy..
+            #    #
+            #    args = ['git', 'pull', '-s', 'ours']
+            #    subprocess.call(args)
+
         elif self.vcs.startswith('http'):
             args = ['wget', '--no-check-certificate', '-O', 'new.pot', self.vcs]
             subprocess.call(args)
@@ -273,7 +282,8 @@ class PotFile:
             shutil.move(new_pot_file, self.location)
         else:
             os.unlink(new_pot_file)
-        sys.stdout.flush() #aleksey suggestion   
+        # Make sure that stdout won't be messy
+        sys.stdout.flush()
 
 def parse_config(location):
     cfg = ConfigParser.ConfigParser()

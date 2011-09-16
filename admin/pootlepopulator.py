@@ -73,7 +73,7 @@ def main():
     else:
         print '********* Found POT file ' + potfile + ' *********'
     
-    print '\n\n********* Starting to symlink files *********'
+    print '********* Starting to symlink files *********'
     for i in os.listdir(podir):
         if i.endswith('.po'):
             src = os.path.join(podir, i)
