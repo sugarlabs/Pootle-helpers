@@ -23,15 +23,15 @@ def pipe(command):
 
 for project in ['honey']:
     project_langs_dir = os.path.join(LINKDIR, project)
-    for j in os.listdir(project_langs_dir):
+    for project_lang in os.listdir(project_langs_dir):
         # List of languages 
-        langs = os.path.join(project_langs_dir, j)
+        langs = os.path.join(project_langs_dir, project_lang)
         for k in os.listdir(langs):
             if k.endswith('.po'):
                 filepath = os.path.join(langs, k)
                 if not os.path.islink(filepath):
                     # got a file which is not a symlink
-                    lang = j
+                    lang = project_lang
                     module = k.replace('.po', '')
                     if k.find('TamTam') > -1:
             			cofile = os.path.join(CODIR, project, 'tamtam', module, 'po', (lang+'.po'))
