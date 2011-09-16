@@ -22,10 +22,10 @@ def pipe(command):
     return output, error, ret
 
 for project in ['honey']:
-    podirpath = os.path.join(LINKDIR, project)
-    for j in os.listdir(podirpath):
+    project_langs_dir = os.path.join(LINKDIR, project)
+    for j in os.listdir(project_langs_dir):
         # List of languages 
-        langs = os.path.join(podirpath, j)
+        langs = os.path.join(project_langs_dir, j)
         for k in os.listdir(langs):
             if k.endswith('.po'):
                 filepath = os.path.join(langs, k)
