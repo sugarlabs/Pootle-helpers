@@ -21,8 +21,8 @@ def pipe(command):
     print output, error
     return output, error, ret
 
-for i in ['honey']:
-    podirpath = os.path.join(LINKDIR, i)
+for project in ['honey']:
+    podirpath = os.path.join(LINKDIR, project)
     for j in os.listdir(podirpath):
         # List of languages 
         langs = os.path.join(podirpath, j)
@@ -34,11 +34,11 @@ for i in ['honey']:
                     lang = j
                     module = k.replace('.po', '')
                     if k.find('TamTam') > -1:
-            			cofile = os.path.join(CODIR, i, 'tamtam', module, 'po', (lang+'.po'))
+            			cofile = os.path.join(CODIR, project, 'tamtam', module, 'po', (lang+'.po'))
                     #elif k.startswith('measure'):
-                    #	cofile = os.path.join(CODIR, i, 'measure-activity', module, 'po', (lang+'.po'))
+                    #	cofile = os.path.join(CODIR, project, 'measure-activity', module, 'po', (lang+'.po'))
                     else:
-                        cofile = os.path.join(CODIR, i, module, 'po', (lang+'.po'))
+                        cofile = os.path.join(CODIR, project, module, 'po', (lang+'.po'))
                     print ('\n\nMoving ' + filepath + ' to ' + cofile)
                     if not DRYRUN:
                         shutil.move(filepath, cofile)
