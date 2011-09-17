@@ -21,7 +21,7 @@ def pipe(command):
     print output, error
     return output, error, ret
 
-for project in ['honey']:
+for project in ['honey', 'fructose', 'fructose84', 'olpc_software', 'glucose', 'glucose84', 'glucose92']:
     project_langs_dir = os.path.join(LINKDIR, project)
     for project_lang in os.listdir(project_langs_dir):
         # List of languages 
@@ -40,14 +40,3 @@ for project in ['honey']:
                     print ('Linking ' + cofile + ' to ' + filepath)
                     if not DRYRUN:
                         os.symlink(cofile, filepath)
-                    if not DRYRUN:
-                        time.sleep(1) # Just a bit extra cautious here
-                        os.chdir(os.path.dirname(cofile))
-                        pipe('git pull')
-                        cmd = 'git add ' + os.path.basename(cofile)
-                        pipe(cmd)
-                        cmd = 'git commit -m "Adding language ' + lang + ' via Pootle"'
-                        pipe(cmd)
-                        cmd = 'git push'
-                        pipe (cmd)
-
