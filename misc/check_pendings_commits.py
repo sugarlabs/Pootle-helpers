@@ -50,7 +50,7 @@ out.write('<head>' +
         '    background-color:white;}' +
         '</style></head>')
 
-out.write('<h1>%s</h1>' % datetime.datetime.utcnow())
+out.write('<h1>%s UTC</h1>' % datetime.datetime.utcnow())
 
 for lang in langs:
     out.write('<th>%s</th>' % lang)
