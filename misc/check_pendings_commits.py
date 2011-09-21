@@ -2,11 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import datetime
 import subprocess
 
 POOTLE_DIR = '/var/lib/pootle/checkouts'
 OUTPUT = '/var/lib/pootle/public_html/status/index.html'
+
+if os.getuid() == 0:
+    print '%s should not be run from root user' % sys.argv[0]
+    exit(1)
 
 out = open(OUTPUT, 'w')
 
@@ -68,9 +73,8 @@ for project in projects:
 
         # check push status
         attrs = {}
-        git = subprocess.Popen(['sudo', '-u', 'pootle',
-                'git', 'push', '-n'], stderr=subprocess.PIPE,
-                stdout=subprocess.PIPE, cwd=module_dir)
+        git = subprocess.Popen(['git', 'push', '-n'],
+                stderr=subprocess.PIPE, stdout=subprocess.PIPE, cwd=module_dir)
         attrs['output'] = git.communicate()[1] \
                 .replace("'", "\\'").replace('\n', '\\n')
         if git.returncode == 0:
@@ -84,12 +88,9 @@ for project in projects:
 
         # check git status
         module_state = {}
-        status = subprocess.Popen(['sudo', '-u', 'pootle',
-                'git', 'status', '-s', '.'],
-                stdout=subprocess.PIPE,
-                cwd=os.path.join(module_dir, 'po')).communicate()[0]
-
-        for line in status.split('\n'):
+        git = subprocess.Popen(['git', 'status', '-s', '.'],
+                stdout=subprocess.PIPE, cwd=os.path.join(module_dir, 'po'))
+        for line in git.communicate()[0].split('\n'):
             words = line.split()
             if words == []:
                 break
