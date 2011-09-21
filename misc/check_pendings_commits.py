@@ -5,7 +5,7 @@ import os
 import subprocess
 
 POOTLE_DIR = '/var/lib/pootle/checkouts'
-OUTPUT = '/home/godiard/pending_commits.html'
+OUTPUT = '/var/lib/pootle/public_html/status/index.html'
 
 out = open(OUTPUT, 'w')
 
