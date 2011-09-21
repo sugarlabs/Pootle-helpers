@@ -1,0 +1,47 @@
+#!/bin/sh
+
+if [ $(whoami) = "root" ]; then
+    echo "$0 should not be run by root user"
+    exit 1
+fi
+
+cd "/var/lib/pootle"
+
+HELPERS="maintenance/helpers"
+
+echo "-- Support old .po filenames to make pack_generator.py happy"
+for lang_dir in `ls -d translations/*/*`; do
+        if [ -e $lang_dir/TamTamSuite.po ]; then
+                ln -fs TamTamSuite.po $lang_dir/TamTamEdit.activity.po
+                ln -fs TamTamSuite.po $lang_dir/TamTamJam.activity.po
+                ln -fs TamTamSuite.po $lang_dir/TamTamMini.activity.po
+                ln -fs TamTamSuite.po $lang_dir/TamTamSynthLab.activity.po
+        fi
+        if [ -e $lang_dir/distance.po ]; then
+                ln -fs distance.po $lang_dir/acoustic-measure-activity.po
+        fi
+done
+
+echo "-- If one particular msgid contains too big value (e.g., 3MB),"
+echo "-- it will cause Pootle to hang for reasonanble time eating much CPU."
+echo "-- So, lets see all >1MB .po files to analyze."
+find translations/ -name '*.po*' -size +1M -exec ls -al {} \;
+
+# $HELPERS/potupdater/check_unmerged_translations.sh
+# [ $? -e 0 ] || echo "-- ERROR"
+
+echo "-- check_bad_ownership.sh"
+$HELPERS/potupdater/check_bad_ownership.sh
+test $? -eq 0 || echo "-- ERROR"
+
+echo "-- Generate .pot files"
+python $HELPERS/potupdater/pogenerator.py $HELPERS/potupdater/project_list.ini
+test $? -eq 0 || echo "-- ERROR"
+
+echo "-- Generate status page"
+python $HELPERS/misc/check_pendings_commits.py
+test $? -eq 0 || echo "-- ERROR"
+
+echo "-- Generate langpacks"
+python langpackgen/src/LangPackGen/pack_generator.py langpackgen/data/langpackgen_84.ini public_html/packs/0.84
+test $? -eq 0 || echo "-- ERROR"
