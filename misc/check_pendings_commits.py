@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import datetime
 import subprocess
 
 POOTLE_DIR = '/var/lib/pootle/checkouts'
@@ -25,7 +26,7 @@ cant_langs = len(langs)
 
 out.write('<html><body>')
 out.write('<table>')
-out.write('<tr><th>Module</th><th>Git</th>')
+out.write('<tr><th>Module</th><th>git push</th>')
 
 out.write('<head>' +
         '<style type=text/css>' +
@@ -44,62 +45,65 @@ out.write('<head>' +
         '    background-color:white;}' +
         '</style></head>')
 
+out.write('<h1>%s</h1>' % datetime.datetime.utcnow())
+
 for lang in langs:
     out.write('<th>%s</th>' % lang)
 out.write('</tr>\n')
 
 for project in projects:
-    out.write('<tr><th> %s </th><th></th><th colspan="%d"></th></tr>' % 
+    out.write('<tr><th> %s </th><th></th><th colspan="%d"></th></tr>' %
             (project, cant_langs))
     for module in os.listdir(os.path.join(POOTLE_DIR, project)):
-        if not module.endswith('.old') and \
-                not module.endswith('.bak'):
-            module_dir = os.path.join(POOTLE_DIR, project, module)
-            if os.path.isdir(module_dir) and \
-                    os.path.isdir(os.path.join(module_dir, 'po')):
-                out.write('<tr><th> %s </th>' % module)
-                # check push status
-                push_status = subprocess.Popen(['sudo', '-u', 'pootle',
-                        'git', 'push', '-n'], stderr=subprocess.PIPE,
-                        stdout=subprocess.PIPE).communicate()[1]
-                in_signature = True
-                push_msj = ''
-                for line in push_status.split('\n'):
-                    if not in_signature:
-                        push_msj += line
-                    if line == '+-----------------+':
-                        in_signature = False
-                if push_msj.endswith('Everything up-to-date') or push_msj == '':
-                    out.write('<th>OK</th>')
-                else:
-                    out.write('<th><a href="javascript:alert(\'%s\')" ' % 
-                            push_msj.replace("'","*") + 'style="color:red">ERROR</a></th>')
+        if module.endswith('.old') or module.endswith('.bak'):
+            continue
 
-                # check git status
-                module_state = {}
-                os.chdir(os.path.join(module_dir, 'po'))
-                status = subprocess.Popen(['sudo', '-u', 'pootle',
-                        'git', 'status', '-s'],
-                        stdout=subprocess.PIPE).communicate()[0]
+        module_dir = os.path.join(POOTLE_DIR, project, module)
+        if not os.path.isdir(module_dir) or \
+                not os.path.isdir(os.path.join(module_dir, 'po')) or \
+                not os.path.isdir(os.path.join(module_dir, '.git')):
+            continue
 
+        out.write('<tr><th> %s </th>' % module)
 
-                for line in status.split('\n'):
-                    words = line.split()
-                    if words == []:
-                        break
-                    state = words[0]
-                    if words[1].endswith('.po'):
-                        lang = words[1][:-3]
-                        if lang in langs:
-                            module_state[lang] = state
-                for lang in langs:
-                    if lang in module_state:
-                        out.write('<td>%s</td>' % module_state[lang])
-                    else:
-                        out.write('<td></td>')
-                out.write('</tr>\n')
+        # check push status
+        attrs = {}
+        git = subprocess.Popen(['sudo', '-u', 'pootle',
+                'git', 'push', '-n'], stderr=subprocess.PIPE,
+                stdout=subprocess.PIPE, cwd=module_dir)
+        attrs['output'] = git.communicate()[1] \
+                .replace("'", "\\'").replace('\n', '\\n')
+        if git.returncode == 0:
+            attrs['color'] = 'green'
+            attrs['text'] = 'OK'
+        else:
+            attrs['color'] = 'red'
+            attrs['text'] = 'ERROR'
+        out.write('<th><a href="javascript:alert(\'%(output)s\')" ' \
+                  'style="color:%(color)s">%(text)s</a></th>' % attrs)
 
+        # check git status
+        module_state = {}
+        status = subprocess.Popen(['sudo', '-u', 'pootle',
+                'git', 'status', '-s', '.'],
+                stdout=subprocess.PIPE,
+                cwd=os.path.join(module_dir, 'po')).communicate()[0]
+
+        for line in status.split('\n'):
+            words = line.split()
+            if words == []:
+                break
+            state = words[0]
+            if words[1].endswith('.po'):
+                lang = words[1][:-3]
+                if lang in langs:
+                    module_state[lang] = state
+        for lang in langs:
+            if lang in module_state:
+                out.write('<td>%s</td>' % module_state[lang])
+            else:
+                out.write('<td></td>')
+        out.write('</tr>\n')
 
 out.write('</table>')
 out.write('</body></html>')
-
