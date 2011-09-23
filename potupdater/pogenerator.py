@@ -279,7 +279,7 @@ class PotFile:
         # Now we do a diff
         podir = os.path.dirname(self.location)
         new_pot_file = os.path.join(podir, 'new.pot')
-        if (len(diff(self.location, new_pot_file))):
+        if (not os.path.exists(self.location) or len(diff(self.location, new_pot_file))):
             print ('\n\n ***** Updating POT for ' + self.project +  '*****\n\n\n')
             shutil.move(new_pot_file, self.location)
         else:
