@@ -6,9 +6,9 @@
 import ConfigParser
 import os, os.path
 import sys
-import re 
+import re
 import subprocess
-import shutil 
+import shutil
 
 USE_DIFFLIB = 0
 
@@ -68,7 +68,7 @@ def _get_source_path(path=None):
         return os.path.join(os.getcwd(), path)
     else:
         return os.getcwd()
-        
+
 def _get_activity_name():
     info_path = os.path.join(_get_source_path(), 'activity', 'activity.info')
     f = open(info_path,'r')
@@ -76,7 +76,7 @@ def _get_activity_name():
     f.close()
     match = re.search('^name\s*=\s*(.*)$', info, flags = re.MULTILINE)
     return match.group(1)
-    
+
 
 def diff(pota, potb, only_additions = 0):
     """Returns a list of differing lines between two files."""
@@ -131,7 +131,7 @@ def _parse_contents(contents):
     if contents[-1] != "\n": contents += "\n"
 
     # state machine for parsing PO files
-    msgid = ""; msgstr = ""; msgctxt = ""; comment = ""; plural = ""; 
+    msgid = ""; msgstr = ""; msgctxt = ""; comment = ""; plural = "";
     in_msgid = in_msgstr = in_msgctxt = in_msgid_plural = in_plural = 0
 
     result = []
@@ -145,7 +145,7 @@ def _parse_contents(contents):
         if line == "":
             if in_msgstr and msgid != "":
                 onemsg = ""
-                
+
                 if msgctxt: onemsg += ('"' + msgctxt + '"::')
                 onemsg += ('"' + msgid + '"')
                 if plural: onemsg += ('/"' + plural + '"')
@@ -198,7 +198,7 @@ def _parse_contents(contents):
             in_msgctxt = 0
         else:
             pass
-    return result    
+    return result
 
 class PotFile:
     def __init__(self, location, project, vcs, method, layout, ignore_files):
@@ -208,7 +208,7 @@ class PotFile:
         self.method = method
         self.layout = layout
         self.ignore_files = ignore_files
-        
+
     def update(self):
         print '\n\n\n ####### Checking POT for ' + self.project + ' ######\n\n\n'
         # Make sure that stdout won't be messy
@@ -238,7 +238,7 @@ class PotFile:
             os.chdir(projdir)
 
             manifest = os.path.join(projdir, 'MANIFEST')
-            
+
             python_files = []
             file_list = _get_file_list(manifest)
             for file_name in file_list:
@@ -266,22 +266,21 @@ class PotFile:
             retcode = subprocess.call(args)
             if retcode:
                 print 'ERROR - xgettext failed with return code %i.' % retcode
-        
+
         elif self.method == 'intltool':
             podir = os.path.dirname(self.location)
             os.chdir(podir)
-            
+
             args = ['intltool-update', '--pot', '--gettext-package=new']
             retcode = subprocess.call(args)
             if retcode:
                 print 'ERROR - intltool failed with return code %i.' % retcode
-                
-        
+
         # Now we do a diff
         podir = os.path.dirname(self.location)
         new_pot_file = os.path.join(podir, 'new.pot')
         if (len(diff(self.location, new_pot_file))):
-	    print ('\n\n ***** Updating POT for ' + self.project +  '*****\n\n\n')
+            print ('\n\n ***** Updating POT for ' + self.project +  '*****\n\n\n')
             shutil.move(new_pot_file, self.location)
         else:
             os.unlink(new_pot_file)
@@ -298,6 +297,6 @@ def parse_config(location):
         p = PotFile(section, cfg.get(section, 'project'), cfg.get(section, 'vcs'),
                 cfg.get(section, 'method'), cfg.get(section, 'layout'), ignore_files)
         p.update()
-        
+
 if __name__ == '__main__':
     parse_config (sys.argv[1])
