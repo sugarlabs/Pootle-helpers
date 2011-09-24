@@ -73,8 +73,10 @@ for project in projects:
 
         # check push status
         attrs = {}
-        git = subprocess.Popen(['git', 'push', '-n'],
-                stderr=subprocess.PIPE, stdout=subprocess.PIPE, cwd=module_dir)
+        git = subprocess.Popen('git push -n origin ' \
+                "$(git branch --no-color | grep ^* | awk '{print $2}')",
+                stderr=subprocess.PIPE, stdout=subprocess.PIPE,
+                cwd=module_dir, shell=True)
         attrs['output'] = git.communicate()[1] \
                 .replace("'", "\\'").replace('\n', '\\n')
         if git.returncode == 0:
