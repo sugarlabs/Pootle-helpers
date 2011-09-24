@@ -9,6 +9,7 @@ import sys
 import re
 import subprocess
 import shutil
+from os.path import join, exists, basename, lexists, islink, dirname
 
 USE_DIFFLIB = 0
 
@@ -201,13 +202,15 @@ def _parse_contents(contents):
     return result
 
 class PotFile:
-    def __init__(self, location, project, vcs, method, layout, ignore_files):
+    def __init__(self, location, project, vcs, method, layout, ignore_files,
+            translation_dir):
         self.location = location
         self.project = project
         self.vcs = vcs
         self.method = method
         self.layout = layout
         self.ignore_files = ignore_files
+        self.translation_dir = translation_dir
 
     def update(self):
         print '\n\n\n ####### Checking POT for ' + self.project + ' ######\n\n\n'
@@ -279,15 +282,44 @@ class PotFile:
         # Now we do a diff
         podir = os.path.dirname(self.location)
         new_pot_file = os.path.join(podir, 'new.pot')
-        if (not os.path.exists(self.location) or len(diff(self.location, new_pot_file))):
+        if not exists(self.location):
+            print ('\n\n ***** Create POT for ' + self.project +  '*****\n\n\n')
+            shutil.move(new_pot_file, self.location)
+        elif len(diff(self.location, new_pot_file)):
             print ('\n\n ***** Updating POT for ' + self.project +  '*****\n\n\n')
             shutil.move(new_pot_file, self.location)
         else:
             os.unlink(new_pot_file)
+
+        filename = self.location.split(os.sep)[-3]
+        project = self.location.split(os.sep)[-4]
+        pot_path = join(self.translation_dir, project, 'templates',
+                filename + '.pot')
+        if not lexists(pot_path) or not islink(pot_path) or \
+                os.readlink(pot_path) != self.location:
+            if lexists(pot_path):
+                print '-- Remove bad template symlink', pot_path
+                os.unlink(pot_path)
+            print '-- Create new template symlink', pot_path, self.location
+            os.symlink(self.location, pot_path)
+
+        for lang in os.listdir(join(self.translation_dir, project)):
+            if lang == 'templates':
+                continue
+            po_path = join(self.translation_dir, project, lang,
+                    filename + '.po')
+            if not exists(po_path):
+                src_po_path = join(dirname(self.location), lang + '.po')
+                if exists(src_po_path):
+                    print '-- Create missed .po link for', lang
+                    os.symlink(src_po_path, po_path)
+                else:
+                    print '?? ', src_po_path
+
         # Make sure that stdout won't be messy
         sys.stdout.flush()
 
-def parse_config(location):
+def parse_config(location, translation_dir):
     cfg = ConfigParser.ConfigParser()
     cfg.read(location)
     for section in cfg.sections():
@@ -295,8 +327,12 @@ def parse_config(location):
         if cfg.has_option(section, 'ignore-files'):
             ignore_files = [i.strip() for i in cfg.get(section, 'ignore-files').split(';')]
         p = PotFile(section, cfg.get(section, 'project'), cfg.get(section, 'vcs'),
-                cfg.get(section, 'method'), cfg.get(section, 'layout'), ignore_files)
+                cfg.get(section, 'method'), cfg.get(section, 'layout'),
+                ignore_files, translation_dir)
         p.update()
 
 if __name__ == '__main__':
-    parse_config (sys.argv[1])
+    if len(sys.argv) != 3:
+        print 'Usage: %s <.ini> <translation-dir>' % sys.argv[0]
+        exit(1)
+    parse_config (sys.argv[1], sys.argv[2])

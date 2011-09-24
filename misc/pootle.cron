@@ -35,7 +35,7 @@ $HELPERS/potupdater/check_bad_ownership.sh
 test $? -eq 0 || echo "-- ERROR"
 
 echo "-- Generate .pot files"
-python $HELPERS/potupdater/pogenerator.py $HELPERS/potupdater/project_list.ini
+python $HELPERS/potupdater/pogenerator.py $HELPERS/potupdater/project_list.ini translations/
 test $? -eq 0 || echo "-- ERROR"
 
 echo "-- Generate status page"
