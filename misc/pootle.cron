@@ -27,9 +27,6 @@ echo "-- it will cause Pootle to hang for reasonanble time eating much CPU."
 echo "-- So, lets see all >1MB .po files to analyze."
 find translations/ -name '*.po*' -size +1M -exec ls -al {} \;
 
-# $HELPERS/potupdater/check_unmerged_translations.sh
-# [ $? -e 0 ] || echo "-- ERROR"
-
 echo "-- check_bad_ownership.sh"
 $HELPERS/potupdater/check_bad_ownership.sh
 test $? -eq 0 || echo "-- ERROR"
