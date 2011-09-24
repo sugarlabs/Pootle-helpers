@@ -313,8 +313,6 @@ class PotFile:
                 if exists(src_po_path):
                     print '-- Create missed .po link for', lang
                     os.symlink(src_po_path, po_path)
-                else:
-                    print '?? ', src_po_path
 
         # Make sure that stdout won't be messy
         sys.stdout.flush()
