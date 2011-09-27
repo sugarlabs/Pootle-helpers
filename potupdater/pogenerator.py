@@ -76,7 +76,7 @@ def _get_activity_name():
     info = f.read()
     f.close()
     match = re.search('^name\s*=\s*(.*)$', info, flags = re.MULTILINE)
-    return match.group(1)
+    return match.group(1).strip()
 
 
 def diff(pota, potb, only_additions = 0):
