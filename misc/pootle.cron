@@ -9,19 +9,6 @@ cd "/var/lib/pootle"
 
 HELPERS="maintenance/helpers"
 
-echo "-- Support old .po filenames to make pack_generator.py happy"
-for lang_dir in `ls -d translations/*/*`; do
-        if [ -e $lang_dir/TamTamSuite.po ]; then
-                ln -fs TamTamSuite.po $lang_dir/TamTamEdit.activity.po
-                ln -fs TamTamSuite.po $lang_dir/TamTamJam.activity.po
-                ln -fs TamTamSuite.po $lang_dir/TamTamMini.activity.po
-                ln -fs TamTamSuite.po $lang_dir/TamTamSynthLab.activity.po
-        fi
-        if [ -e $lang_dir/distance.po ]; then
-                ln -fs distance.po $lang_dir/acoustic-measure-activity.po
-        fi
-done
-
 echo "-- If one particular msgid contains too big value (e.g., 3MB),"
 echo "-- it will cause Pootle to hang for reasonanble time eating much CPU."
 echo "-- So, lets see all >1MB .po files to analyze."
