@@ -30,10 +30,14 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
     c =  ConfigParser.ConfigParser()
     c.read(configfile)
 
+    sections = []
     for i in c.sections():
+        for molocation in c.get(i, 'molocation').split():
+            sections.append((i, molocation))
+
+    for i, mo in sections:
         name = c.get(i, 'name')
         cat = c.get(i, 'category')
-        mo = c.get(i, 'molocation')
         needs_linfo = c.getint(i, 'needs_linfo')
         try:
             linfo = c.get(i, 'linfolocation')
@@ -43,6 +47,9 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
                                                                 'activity.linfo')
 
         pofile = os.path.join(TRANSLATE_DIR, cat, lang, i)
+        if not os.path.exists(pofile):
+            print 'WARNING: no %s file' % pofile
+            continue
         mofile = os.path.join(tmpdir, lang, name + '.mo')
         linfofile = os.path.join(tmpdir, lang, name + '.linfo')
         cmd = ['msgfmt', pofile, '-o', mofile]
@@ -78,7 +85,7 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
     f = open(os.path.join(tmpdir, lang, 'uninstall_langpack'), 'a')
     f.write('#!/bin/bash\n')
     
-    for i in c.sections():
+    for i, mo in sections:
         mo = c.get(i, 'molocation')
         needs_linfo = c.get(i, 'needs_linfo')
         
