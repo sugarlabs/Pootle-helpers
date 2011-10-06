@@ -48,7 +48,6 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
 
         pofile = os.path.join(TRANSLATE_DIR, cat, lang, i)
         if not os.path.exists(pofile):
-            print 'WARNING: no %s file' % pofile
             continue
         mofile = os.path.join(tmpdir, lang, name + '.mo')
         linfofile = os.path.join(tmpdir, lang, name + '.linfo')
