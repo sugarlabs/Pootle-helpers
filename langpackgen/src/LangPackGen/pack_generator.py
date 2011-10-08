@@ -31,8 +31,8 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
     c.read(configfile)
 
     sections = []
-    for i in c.sections():
-        for molocation in c.get(i, 'molocation').split():
+    for i in config.sections():
+        for molocation in config.get(i, 'molocation').split():
             sections.append((i, molocation))
 
     for i, mo in sections:
@@ -73,7 +73,7 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
     f.write ('\n\n\ncp uninstall_langpack /usr/bin/uninstall_langpack_' + lang)
 
     # Some of the directories created are left as root owned. We need to fix that
-    f.write ('\n\n\nfind /home/olpc/Activities -uid 0 -print0 | xargs -0 chown olpc:olpc')
+    f.write ('\n\n\nfind /home/olpc/Activities -uid 0 -exec chown olpc:olpc {} \;')
 
     f.close()
 
@@ -85,7 +85,6 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
     f.write('#!/bin/bash\n')
     
     for i, mo in sections:
-        mo = c.get(i, 'molocation')
         needs_linfo = c.get(i, 'needs_linfo')
         
         try:
