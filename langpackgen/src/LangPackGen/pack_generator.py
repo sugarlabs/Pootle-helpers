@@ -31,8 +31,8 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
     c.read(configfile)
 
     sections = []
-    for i in config.sections():
-        for molocation in config.get(i, 'molocation').split():
+    for i in c.sections():
+        for molocation in c.get(i, 'molocation').split():
             sections.append((i, molocation))
 
     for i, mo in sections:
