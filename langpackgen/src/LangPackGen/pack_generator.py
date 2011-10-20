@@ -10,12 +10,12 @@ import shutil
 
 import translate.storage.po
 
-LANGS = ['af', 'am', 'ar', 'ay', 'bg', 'bn', 'bn_IN', 'ca', 'de', 'dz', 'el', 
-         'en', 'es', 'fa', 'fa_AF', 'ff', 'fr', 'gu', 'ha', 'hi', 'ht', 'ig', 
-         'is', 'it', 'ja', 'km', 'ko', 'mg', 'mk', 'ml', 'mn', 'mr', 'mvo', 'nb', 
-         'ne', 'nl', 'pa', 'pap', 'pis', 'pl', 'ps', 'pt', 'pt_BR', 
-         'qu', 'ro', 'ru', 'rw', 'sd', 'si', 'sl', 'ta', 'te', 'th', 
-         'tpi', 'tr', 'ur', 'vi', 'yo', 'zh_CN', 'zh_TW']
+LANGS = ['af', 'am', 'ar', 'aym', 'bg', 'bn', 'ca', 'da', 'de', 'el', 'en',
+         'es', 'fa', 'fa_AF', 'fr', 'hi', 'ht', 'hus', 'hy', 'id', 'it', 'ja',
+         'km', 'mg', 'mk', 'mn', 'mr', 'nb', 'ne', 'nl', 'pap', 'pl', 'ps',
+         'pt', 'pt_BR', 'quy', 'quz', 'ro', 'ru', 'rw', 'si', 'sl', 'sq', 'sv',
+         'sw', 'ta', 'te', 'th', 'tr', 'ur', 'vi', 'zh_CN', 'zh_TW',
+         ]
 TRANSLATE_DIR = '/var/lib/pootle/translations'
 
 
