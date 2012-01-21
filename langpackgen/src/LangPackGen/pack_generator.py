@@ -10,11 +10,11 @@ import shutil
 
 import translate.storage.po
 
-LANGS = ['af', 'am', 'ar', 'aym', 'bg', 'bn', 'ca', 'da', 'de', 'el', 'en',
-         'es', 'fa', 'fa_AF', 'fr', 'hi', 'ht', 'hus', 'hy', 'id', 'it', 'ja',
+LANGS = ['af', 'am', 'ar', 'aym', 'bg', 'bn', 'ca', 'da', 'de', 'el', 'en_GB', 
+         'es', 'fa', 'fa_AF', 'fil', 'fr', 'hi', 'ht', 'hus', 'hy', 'id', 'it', 'ja',
          'km', 'mg', 'mk', 'mn', 'mr', 'nb', 'ne', 'nl', 'pap', 'pl', 'ps',
          'pt', 'pt_BR', 'quy', 'quz', 'ro', 'ru', 'rw', 'si', 'sl', 'sq', 'sv',
-         'sw', 'ta', 'te', 'th', 'tr', 'ur', 'vi', 'zh_CN', 'zh_TW',
+         'sw', 'ta', 'te', 'th', 'tr', 'ur', 'vi', 'zh_CN', 'zh_TW'
          ]
 TRANSLATE_DIR = '/var/lib/pootle/translations'
 
