@@ -121,7 +121,8 @@ def gen_linfo(filepath, name, lang, pofile):
     """ Generates activity.linfo file from translations from the PO file"""
     po = translate.storage.po.pofile.parsefile(pofile)
     unit = po.findunit(name)
-    
+    print '-- Parse %s for getting "%s" unit' % (pofile, name)
+
     if unit.istranslated() == False:
         act_name = name # Doh! Not translated. We stick to the English name
     else:
