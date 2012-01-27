@@ -30,14 +30,17 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
     c =  ConfigParser.ConfigParser()
     c.read(configfile)
 
-    sections = []
     for i in c.sections():
-        for molocation in c.get(i, 'molocation').split():
-            sections.append((i, molocation))
-
-    for i, mo in sections:
         name = c.get(i, 'name')
         cat = c.get(i, 'category')
+        mo = c.get(i, 'molocation')
+        molocations = [mo]
+        # check if there are other destinations
+        j = 1
+        while c.has_option(i, 'molocation_%d' % j):
+            molocations.append(c.get(i, 'molocation_%d' % j))
+            j = j + 1
+        
         needs_linfo = c.getint(i, 'needs_linfo')
         try:
             linfo = c.get(i, 'linfolocation')
@@ -47,8 +50,6 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
                                                                 'activity.linfo')
 
         pofile = os.path.join(TRANSLATE_DIR, cat, lang, i)
-        if not os.path.exists(pofile):
-            continue
         mofile = os.path.join(tmpdir, lang, name + '.mo')
         linfofile = os.path.join(tmpdir, lang, name + '.linfo')
         cmd = ['msgfmt', pofile, '-o', mofile]
@@ -63,8 +64,9 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
         else:
             install_string = '\n\tinstall -D -b -m 644 '
         
-        f.write('\nif [[ -d ' + os.path.dirname(mo[:(mo.find('LL') - 1)]) + ' ]] ; then')
-        f.write(install_string + name.replace(' ', '\\ ') + '.mo ' + mo.replace('LL', lang))
+        for molocation in molocations:
+            f.write('\nif [[ -d ' + os.path.dirname(molocation[:(molocation.find('LL') - 1)]) + ' ]] ; then')
+            f.write(install_string + name.replace(' ', '\\ ') + '.mo ' + molocation.replace('LL', lang))
             
         if needs_linfo == 1:
             f.write(install_string + name.replace(' ', '\\ ') + '.linfo ' + linfo)
@@ -73,7 +75,7 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
     f.write ('\n\n\ncp uninstall_langpack /usr/bin/uninstall_langpack_' + lang)
 
     # Some of the directories created are left as root owned. We need to fix that
-    f.write ('\n\n\nfind /home/olpc/Activities -uid 0 -exec chown olpc:olpc {} \;')
+    f.write ('\n\n\nfind /home/olpc/Activities -uid 0 -print0 | xargs -0 chown olpc:olpc')
 
     f.close()
 
@@ -84,7 +86,15 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
     f = open(os.path.join(tmpdir, lang, 'uninstall_langpack'), 'a')
     f.write('#!/bin/bash\n')
     
-    for i, mo in sections:
+    for i in c.sections():
+        mo = c.get(i, 'molocation')
+        molocations = [mo]
+        # check if there are other destinations
+        j = 1
+        while c.has_option(i, 'molocation_%d' % j):
+            molocations.append(c.get(i, 'molocation_%d' % j))
+            j = j + 1
+
         needs_linfo = c.get(i, 'needs_linfo')
         
         try:
@@ -95,10 +105,12 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
                                                                 'activity.linfo')
 
         
-        f.write ('\nrm -f ' + mo.replace('LL', lang))
-        f.write ('\nif [ -f ' + mo.replace('LL', lang) + '~ ]; then\n\tmv ' 
-                 + mo.replace('LL', lang) + '~ ' + mo.replace('LL', lang) 
-                 + '\nfi')
+        for molocation in molocations:
+            f.write ('\nrm -f ' + molocation.replace('LL', lang))
+            f.write ('\nif [ -f ' + molocation.replace('LL', lang) + '~ ]; then\n\tmv ' 
+                     + molocation.replace('LL', lang) + '~ ' + molocation.replace('LL', lang) 
+                     + '\nfi')
+
         if needs_linfo == 1:
             f.write ('\nrm -f ' + linfo)
             f.write ('\nif [ -f ' + linfo + '~ ]; then\n\tmv ' + linfo 
@@ -119,18 +131,20 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
 
 def gen_linfo(filepath, name, lang, pofile):
     """ Generates activity.linfo file from translations from the PO file"""
-    po = translate.storage.po.pofile.parsefile(pofile)
-    unit = po.findunit(name)
-    print '-- Parse %s for getting "%s" unit' % (pofile, name)
+    try:
+        po = translate.storage.po.pofile.parsefile(pofile)
+        unit = po.findunit(name)
+    
+        if unit.istranslated() == False:
+            act_name = name # Doh! Not translated. We stick to the English name
+        else:
+            act_name = unit.gettarget()
 
-    if unit.istranslated() == False:
-        act_name = name # Doh! Not translated. We stick to the English name
-    else:
-        act_name = unit.gettarget()
-
-    f = open(filepath, 'a')
-    f.write('[Activity]\nname = ' + act_name.encode('utf-8'))
-    f.close()
+        f = open(filepath, 'a')
+        f.write('[Activity]\nname = ' + act_name.encode('utf-8'))
+        f.close()
+    except:
+        pass
 
 if __name__ == '__main__':
     dir = tempfile.mkdtemp()
