@@ -1,5 +1,5 @@
 The script is invoked in the form <script> <inifile> <outputdir>
 For example: 
 
-python /home/sayamindu/LangPack/v2/pack_generator.py /home/sayamindu/LangPack/v2/langpackgen_update1.ini /home/sayamindu/public_html/langpacks_v2/8.1
+python /var/lib/pootle/maintenance/helpers/langpackgen/src/LangPackGen/pack_generator.py /var/lib/pootle/maintenance/helpers/langpackgen/data/langpackgen_94.ini /var/lib/pootle/public_html/packs/0.94
 
