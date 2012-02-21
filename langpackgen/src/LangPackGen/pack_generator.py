@@ -11,7 +11,7 @@ import shutil
 import translate.storage.po
 
 LANGS = ['af', 'am', 'ar', 'ay', 'bg', 'bn', 'bn_IN', 'ca', 'de', 'dz', 'el', 
-         'en', 'es', 'fa', 'fa_AF', 'ff', 'fr', 'gu', 'ha', 'hi', 'ht', 'hy', 'ig', 
+         'en', 'es', 'fa', 'fa_AF', 'ff', 'fr', 'gu', 'gn', 'ha', 'hi', 'ht', 'hy', 'ig', 
          'is', 'it', 'ja', 'km', 'ko', 'mg', 'mk', 'ml', 'mn', 'mr', 'mvo', 'nb', 
          'ne', 'nl', 'pa', 'pap', 'pis', 'pl', 'ps', 'pt', 'pt_BR', 
          'qu', 'ro', 'ru', 'rw', 'sd', 'si', 'sl', 'ta', 'te', 'th', 
