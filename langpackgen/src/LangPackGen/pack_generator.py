@@ -34,6 +34,7 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
         name = c.get(i, 'name')
         cat = c.get(i, 'category')
         mo = c.get(i, 'molocation')
+        mo_filename = os.path.basename(mo)
         molocations = [mo]
         # check if there are other destinations
         j = 1
@@ -50,7 +51,7 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
                                                                 'activity.linfo')
 
         pofile = os.path.join(TRANSLATE_DIR, cat, lang, i)
-        mofile = os.path.join(tmpdir, lang, name + '.mo')
+        mofile = os.path.join(tmpdir, lang, mo_filename)
         linfofile = os.path.join(tmpdir, lang, name + '.linfo')
         cmd = ['msgfmt', pofile, '-o', mofile]
         subprocess.call(cmd) # Generate the MO file
@@ -66,7 +67,7 @@ def gen_langpack(lang, tmpdir, configfile, opdir):
         
         for molocation in molocations:
             f.write('\nif [[ -d ' + os.path.dirname(molocation[:(molocation.find('LL') - 1)]) + ' ]] ; then')
-            f.write(install_string + name.replace(' ', '\\ ') + '.mo ' + molocation.replace('LL', lang))
+            f.write(install_string + ' ' + mo_filename.replace(' ', '\\ ') + ' ' + molocation.replace('LL', lang))
             f.write('\nfi\n')
             
         if needs_linfo == 1:
