@@ -42,22 +42,8 @@ class _DefaultFileList(list):
         if os.path.isfile(_get_source_path('NEWS')):
             self.append('NEWS')
 
-class _ManifestFileList(_DefaultFileList):
-    def __init__(self, manifest):
-        _DefaultFileList.__init__(self)
-        self.append(manifest)
-
-        f = open(manifest,'r')
-        for line in f.readlines():
-            stripped_line = line.strip()
-            if stripped_line and not stripped_line in self:
-                self.append(stripped_line)
-        f.close()
-
 def _get_file_list(manifest):
-    if os.path.isfile(manifest):
-        return _ManifestFileList(manifest)
-    elif os.path.isdir('.git'):
+    if os.path.isdir('.git'):
         return _GitFileList()
     elif os.path.isdir('.svn'):
         return _SvnFileList()
