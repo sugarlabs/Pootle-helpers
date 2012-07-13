@@ -265,17 +265,25 @@ class PotFile:
             if retcode:
                 print 'ERROR - intltool failed with return code %i.' % retcode
 
+        elif self.method == 'sweets':
+            podir = os.path.dirname(self.location)
+            args = ['sweets', 'genpot', podir]
+            retcode = subprocess.call(args)
+            if retcode:
+                print 'ERROR - sweets failed with return code %i.' % retcode
+
         # Now we do a diff
         podir = os.path.dirname(self.location)
         new_pot_file = os.path.join(podir, 'new.pot')
-        if not exists(self.location):
-            print ('\n\n ***** Create POT for ' + self.project +  '*****\n\n\n')
-            shutil.move(new_pot_file, self.location)
-        elif len(diff(self.location, new_pot_file)):
-            print ('\n\n ***** Updating POT for ' + self.project +  '*****\n\n\n')
-            shutil.move(new_pot_file, self.location)
-        else:
-            os.unlink(new_pot_file)
+        if exists(new_pot_file):
+            if not exists(self.location):
+                print ('\n\n ***** Create POT for ' + self.project +  '*****\n\n\n')
+                shutil.move(new_pot_file, self.location)
+            elif len(diff(self.location, new_pot_file)):
+                print ('\n\n ***** Updating POT for ' + self.project +  '*****\n\n\n')
+                shutil.move(new_pot_file, self.location)
+            else:
+                os.unlink(new_pot_file)
 
         filename = self.location.split(os.sep)[-3]
         project = self.location.split(os.sep)[-4]
