@@ -3,12 +3,12 @@
 # Code in this file has been taken from Sugar (activity.bundlebuilder POT generation code) 
 # and Damned Lies (POT diff code)
 
-import ConfigParser
 import os, os.path
 import sys
 import re
 import subprocess
 import shutil
+from ConfigParser import ConfigParser
 from os.path import join, exists, basename, lexists, islink, dirname
 
 USE_DIFFLIB = 0
@@ -55,15 +55,6 @@ def _get_source_path(path=None):
         return os.path.join(os.getcwd(), path)
     else:
         return os.getcwd()
-
-def _get_activity_name():
-    info_path = os.path.join(_get_source_path(), 'activity', 'activity.info')
-    f = open(info_path,'r')
-    info = f.read()
-    f.close()
-    match = re.search('^name\s*=\s*(.*)$', info, flags = re.MULTILINE)
-    return match.group(1).strip()
-
 
 def diff(pota, potb, only_additions = 0):
     """Returns a list of differing lines between two files."""
@@ -234,19 +225,24 @@ class PotFile:
                 if os.path.exists(file_name) and file_name.endswith('.py') and file_name not in self.ignore_files:
                     python_files.append(file_name)
 
+            activity_info = ConfigParser()
+            activity_info.read(join(_get_source_path(), 'activity', 'activity.info'))
+
             # First write out a stub .pot file containing just the translated
             # activity name, then have xgettext merge the rest of the
             # translations into that. (We can't just append the activity name
             # to the end of the .pot file afterwards, because that might
             # create a duplicate msgid.)
-            new_pot_file = os.path.join(projdir, 'po', 'new.pot') 
-            activity_name = _get_activity_name()
-            escaped_name = re.sub('([\\\\"])', '\\\\\\1', activity_name)
-            f = open(new_pot_file, 'w')
-            f.write('#: activity/activity.info:2\n')
-            f.write('msgid "%s"\n' % escaped_name)
-            f.write('msgstr ""\n')
-            f.close()
+            new_pot_file = os.path.join(projdir, 'po', 'new.pot')
+            with file(new_pot_file, 'w') as f:
+                option_value = self.project
+                for option_name in ('name', 'summary', 'description'):
+                    if activity_info.has_option('Activity', option_name):
+                        option_value = activity_info.get('Activity', option_name)
+                    escaped_value = re.sub('([\\\\"])', '\\\\\\1', option_value.replace('\n', ' '))
+                    f.write('#. TRANS: "%s" option from activity.info file\n' % option_name)
+                    f.write('msgid "%s"\n' % escaped_value)
+                    f.write('msgstr ""\n')
 
             args = [ 'xgettext', '--join-existing', '--language=Python',
                      '--keyword=_', '--add-comments=TRANS:', '--output=%s' % new_pot_file ]
@@ -312,7 +308,7 @@ class PotFile:
         sys.stdout.flush()
 
 def parse_config(location, translation_dir):
-    cfg = ConfigParser.ConfigParser()
+    cfg = ConfigParser()
     cfg.read(location)
     for section in cfg.sections():
         ignore_files = []
