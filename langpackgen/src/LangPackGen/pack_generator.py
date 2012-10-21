@@ -10,12 +10,14 @@ import shutil
 
 import translate.storage.po
 
-LANGS = ['af', 'am', 'ar', 'ay', 'bg', 'bn', 'bn_IN', 'ca', 'da', 'de', 'dz', 'el', 
-         'en', 'en_GB', 'es', 'fa', 'fa_AF', 'fil', 'ff', 'fr', 'gu', 'gn', 'ha', 
-         'hi', 'ht', 'hus', 'hy', 'id', 'ig', 'is', 'it', 'ja', 'km', 'ko', 'mg', 'mi', 'mk', 
-          'ml','mn', 'mr', 'mvo', 'nb', 'ne', 'nl', 'pa', 'pap', 'pis', 'pl', 'ps', 'pt',
-         'pt_BR','quy','quz', 'ro', 'ru', 'rw', 'sd', 'si', 'sl', 'sq', 'sv', 'sw' 'ta', 'te', 
-         'th', 'tpi', 'tr', 'ur', 'vi', 'yo', 'zh_CN', 'zh_TW']
+LANGS = ['af', 'am', 'ak','ar', 'ayc', 'be', 'be@latin', 'bg', 'bn', 'bn_IN', 'ca',
+         'cs','da', 'de', 'dz', 'el', 'en', 'en_GB', 'es', 'fa', 'fa_AF', 'fil', 
+         'ff', 'fr', 'gu', 'gn', 'gu','ha', 'he', 'hi', 'ht', 'hus', 'hy', 'id', 
+         'ig', 'is', 'it', 'ja', 'km', 'kn', 'ko', 'kos', 'ku', 'ky', 'lt', 'lv', 
+         'mg', 'mi', 'mk','ml','mn', 'mr', 'ms', 'mvo', 'na', 'nah' 'nb', 'ne', 'nl',
+         'pa', 'pap', 'pbs', 'pl', 'ps', 'pt', 'pt_BR','quy','quz', 'ro', 'ru', 'rw',
+         'sd', 'si', 'sk', 'sl', 'sm', 'son', 'sq', 'sr', 'sv', 'sw' 'ta', 'te', 
+         'th', 'tr', 'ur', 'vi', 'yo', 'zh_CN', 'zh_TW']
 
 TRANSLATE_DIR = '/var/lib/pootle/translations'
 
