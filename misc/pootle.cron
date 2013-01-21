@@ -36,5 +36,5 @@ test $? -eq 0 || echo "-- ERROR"
 echo "-- Generate langpacks"
 #python $HELPERS/langpackgen/src/LangPackGen/pack_generator.py $HELPERS/langpackgen/data/langpackgen_84.ini public_html/packs/0.84
 #test $? -eq 0 || echo "-- ERROR"
-python $HELPERS/langpackgen/src/LangPackGen/pack_generator.py $HELPERS/langpackgen/data/langpackgen_94.ini public_html/packs/0.94
+python $HELPERS/langpackgen/src/LangPackGen/pack_generator.py $HELPERS/langpackgen/data/langpackgen_98.ini public_html/packs/0.98
 test $? -eq 0 || echo "-- ERROR"
